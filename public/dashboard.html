@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>進捗ダッシュボード（完了順）</title>
+</head>
+<body>
+  <h1>班ごとの進捗（完了順）</h1>
+  <ul id="list">読み込み中…</ul>
+
+  <script type="module">
+    import { fetchDoneIssues } from './js/app.js';
+    const list = document.getElementById('list');
+
+    async function update() {
+      try {
+        const issues = await fetchDoneIssues();
+        issues.sort((a,b) => new Date(a.created_at) - new Date(b.created_at));
+        list.innerHTML = '';
+        for (const issue of issues) {
+          const time = new Date(issue.created_at).toLocaleTimeString('ja-JP');
+          const team = issue.title.replace(/%20/g,' ').split(' ')[0];
+          const li = document.createElement('li');
+          li.textContent = `${team} — 完了 ✔ ${time}`;
+          list.appendChild(li);
+        }
+      } catch (e) {
+        list.textContent = 'データ取得エラー';
+        console.error(e);
+      }
+    }
+
+    update();
+    setInterval(update, 5000);
+  </script>
+</body>
+</html>
