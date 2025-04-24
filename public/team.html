@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>班完了ページ</title>
+</head>
+<body>
+  <h1>班を選択して完了を報告</h1>
+  <label for="teamSelect">班を選択：</label>
+  <select id="teamSelect">
+    <option value="" disabled selected>-- 番号を選択 --</option>
+    <!-- 1〜20班 -->
+    ${[...Array(20)].map((_,i)=>`<option value=\"班${i+1}\">班${i+1}</option>`).join("\n    ")}
+  </select>
+  <button id="finishBtn" disabled>✔ 終了しました</button>
+
+  <script>
+    const select = document.getElementById('teamSelect');
+    const btn    = document.getElementById('finishBtn');
+
+    // 選択時にボタンを活性化
+    select.addEventListener('change', () => btn.disabled = !select.value);
+
+    // クリックで Issue 作成画面を新規タブで開く
+    btn.addEventListener('click', () => {
+      const teamId = select.value;
+      const repo   = 'Jinshin2534/team-status';
+      const title  = encodeURIComponent(`${teamId} done`);
+      const labels = encodeURIComponent('done');
+      const url    = `https://github.com/${repo}/issues/new?title=${title}&labels=${labels}`;
+      window.open(url, '_blank');
+    });
+  </script>
+</body>
+</html>
